@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerMap VN - Khám phá ngành học, Tìm trường phù hợp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <h1 class="logo">CareerMap <span>VN</span></h1>
+            <p class="tagline">Khám phá ngành học — Tìm trường phù hợp</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Chú ý: Ở đây ta sẽ chia ra các section điều hướng -->
+        <section id="flow-selection" class="flow-selection">
+            <button class="btn btn-large btn-primary" onclick="startFlowA()">🧭 Tôi chưa biết mình hợp ngành gì</button>
+            <button class="btn btn-large btn-outline" onclick="startFlowB()">🎯 Tôi đã biết ngành, cần tìm trường</button>
+        </section>
+
+        <!-- Luồng A: Khám phá ngành -->
+        <section id="flow-a" class="flow-section hidden">
+            <div class="card flow-card">
+                <h2>🧭 Khám phá ngành học</h2>
+                <p class="text-muted mb-4">Chọn các môn học và sở thích để AI gợi ý ngành phù hợp nhất với bạn.</p>
+
+                <div class="form-group">
+                    <label>1. Môn học yêu thích (chọn nhiều)</label>
+                    <div class="pill-group" id="subject-pills">
+                        <button class="pill" onclick="togglePill(this)">Toán</button>
+                        <button class="pill" onclick="togglePill(this)">Văn</button>
+                        <button class="pill" onclick="togglePill(this)">Tiếng Anh</button>
+                        <button class="pill" onclick="togglePill(this)">Lý</button>
+                        <button class="pill" onclick="togglePill(this)">Hóa</button>
+                        <button class="pill" onclick="togglePill(this)">Sinh</button>
+                        <button class="pill" onclick="togglePill(this)">Sử</button>
+                        <button class="pill" onclick="togglePill(this)">Địa</button>
+                        <button class="pill" onclick="togglePill(this)">Tin học</button>
+                        <button class="pill" onclick="togglePill(this)">Nghệ thuật</button>
+                        <button class="pill" onclick="togglePill(this)">Thể dục</button>
+                        <button class="pill" onclick="togglePill(this)">Kỹ thuật</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>2. Bạn thích làm việc kiểu gì?</label>
+                    <div class="radio-card-group">
+                        <div class="radio-card-pair">
+                            <label class="radio-card"><input type="radio" name="work_style_1" value="Làm một mình"><span>Làm một mình</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_1" value="Làm việc nhóm"><span>Làm việc nhóm</span></label>
+                        </div>
+                        <div class="radio-card-pair">
+                            <label class="radio-card"><input type="radio" name="work_style_2" value="Trong văn phòng"><span>Trong văn phòng</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_2" value="Ra ngoài thực địa"><span>Ra ngoài thực địa</span></label>
+                        </div>
+                        <div class="radio-card-pair">
+                            <label class="radio-card"><input type="radio" name="work_style_3" value="Phân tích / logic"><span>Phân tích / logic</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_3" value="Sáng tạo / nghệ thuật"><span>Sáng tạo / nghệ thuật</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-large btn-primary w-100" onclick="submitFlowA()">✨ Gợi ý ngành phù hợp cho tôi</button>
+            </div>
+
+            <div id="results-a" class="results-container hidden">
+                <h3 class="mb-3">🎯 Khuyến nghị dành cho bạn</h3>
+                <div id="majors-list" class="cards-grid">
+                    <!-- JS will render cards here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Luồng B: Tìm trường -->
+        <section id="flow-b" class="flow-section hidden">
+            <div class="card flow-card">
+                <h2>🎯 Tìm trường & Nghề nghiệp</h2>
+                <p class="text-muted mb-4">Nhập thông tin để tìm trường phù hợp với ngành học bạn muốn theo đuổi.</p>
+
+                <div class="form-group">
+                    <label>Ngành muốn học</label>
+                    <input type="text" id="major-input" class="text-input" placeholder="VD: Công nghệ thông tin, Marketing..." list="major-suggestions">
+                    <datalist id="major-suggestions">
+                        <option value="Công nghệ thông tin">
+                        <option value="Kinh tế">
+                        <option value="Quản trị kinh doanh">
+                        <option value="Marketing">
+                        <option value="Y khoa">
+                        <option value="Ngôn ngữ Anh">
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>Khu vực ưu tiên</label>
+                    <select id="location-select" class="text-input">
+                        <option value="Toàn quốc">Toàn quốc</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="TP.HCM">TP.HCM</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="Tỉnh khác">Tỉnh khác</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Điểm thi tham khảo (3 môn tổ hợp)</label>
+                    <input type="number" id="score-input" class="text-input" placeholder="VD: 24.5" step="0.25" min="0" max="30">
+                </div>
+
+                <div class="form-group">
+                    <label>Ngân sách học phí/năm</label>
+                    <select id="budget-select" class="text-input">
+                        <option value="Không giới hạn">Không giới hạn</option>
+                        <option value="Dưới 20 triệu">Dưới 20 triệu</option>
+                        <option value="20–40 triệu">20–40 triệu</option>
+                        <option value="Trên 40 triệu">Trên 40 triệu</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-large btn-primary w-100" onclick="submitFlowB()">📚 Tìm trường cho tôi</button>
+            </div>
+
+            <div id="results-b" class="results-container hidden">
+                <div class="disclaimer-box mb-4">
+                    ⚠️ Thông tin học phí và điểm chuẩn mang tính tham khảo, tổng hợp từ dữ liệu công khai. Vui lòng xác minh trực tiếp với nhà trường trước khi quyết định.
+                </div>
+
+                <h3 class="mb-3">🏫 Các trường nổi bật</h3>
+                <div id="schools-list" class="cards-grid mb-4">
+                    <!-- JS render schools here -->
+                </div>
+
+                <h3 class="mb-3">💼 Nghề nghiệp tương lai & Kỹ năng</h3>
+                <div class="card bg-light">
+                    <div id="career-info">
+                        <!-- JS render career info here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p id="loading-text">Đang phân tích dữ liệu...</p>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
