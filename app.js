@@ -45,29 +45,60 @@ async function submitFlowA() {
     if (workStyle2) traits.push(workStyle2.value);
     if (workStyle3) traits.push(workStyle3.value);
 
-    // Call API (Mocking for structural test, will implement real fetch later)
-    showLoading("Đang phân tích sở thích của bạn...");
+    const userMessage = `Môn học yêu thích: ${activePills.join(', ')}. Tính cách làm việc: ${traits.join(', ')}.`;
+
+    const systemPrompt = `Bạn là chuyên gia tư vấn hướng nghiệp cho học sinh cấp 3 Việt Nam.
+Dựa trên môn học yêu thích và tính cách làm việc của học sinh, gợi ý 3–5 ngành học phù hợp.
+
+Trả lời ONLY bằng JSON format sau, trích xuất nguyên vẹn định dạng này, bắt đầu bằng { và kết thúc bằng }. Không giải thích thêm:
+{
+  "nganh": [
+    {
+      "ten": "Tên ngành",
+      "emoji": "emoji phù hợp",
+      "ly_do": "1 câu giải thích tại sao phù hợp với input của học sinh",
+      "phu_hop_mon": ["môn 1", "môn 2"],
+      "tinh_cach": "mô tả tính cách phù hợp ngắn gọn"
+    }
+  ]
+}`;
+
+    showLoading("Đang phân tích sở thích bằng AI...");
     
-    // Giả lập API trả về sau 2s
-    setTimeout(() => {
+    try {
+        const response = await fetch('http://localhost:3000/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ systemPrompt, userMessage })
+        });
+
+        if (!response.ok) {
+            const errBody = await response.json();
+            throw new Error(errBody.error?.error?.message || "Lỗi kết nối đến server proxy.");
+        }
+
+        const data = await response.json();
+        const textResponse = data.content?.[0]?.text;
+        
+        if (!textResponse) throw new Error("Dữ liệu trả về từ AI không hợp lệ.");
+
+        const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("Không thể trích xuất JSON từ kết quả AI.");
+        
+        const parsedData = JSON.parse(jsonMatch[0]);
+        
         hideLoading();
-        renderMajors([
-            {
-                ten: "Công nghệ thông tin",
-                emoji: "💻",
-                ly_do: "Bạn thích làm việc phân tích/logic và độc lập, rất hợp với lập trình.",
-                phu_hop_mon: ["Toán", "Tin học"],
-                tinh_cach: "Phân tích, làm một mình"
-            },
-            {
-                ten: "Kinh tế - Tài chính",
-                emoji: "📊",
-                ly_do: "Kỹ năng tính toán tốt từ môn Toán kết hợp với tư duy logic.",
-                phu_hop_mon: ["Toán"],
-                tinh_cach: "Phân tích, văn phòng"
-            }
-        ]);
-    }, 2000);
+        if (parsedData.nganh && parsedData.nganh.length > 0) {
+            renderMajors(parsedData.nganh);
+        } else {
+            alert("AI không trả về kết quả ngành nào. Vui lòng thử lại!");
+        }
+
+    } catch (error) {
+        console.error(error);
+        hideLoading();
+        alert("Đã xảy ra lỗi: " + error.message + "\nVui lòng xem log (F12) để biết chi tiết và kiểm tra xem server.bat đã chạy chưa.");
+    }
 }
 
 function showLoading(text) {
@@ -120,110 +151,86 @@ function goToFlowBMajor(majorName) {
 async function submitFlowB() {
     const major = document.getElementById('major-input').value.trim();
     const location = document.getElementById('location-select').value;
+    const score = document.getElementById('score-input').value.trim();
+    const budget = document.getElementById('budget-select').value;
     
     if (!major) {
         alert("Vui lòng nhập ngành bạn muốn học!");
         return;
     }
 
-    showLoading("Đang tra cứu dữ liệu trường và điểm chuẩn...");
+    let userMessage = `Ngành muốn học: ${major}. Khu vực: ${location}.`;
+    if (score) userMessage += ` Điểm thi dự kiến (3 môn): ${score} điểm.`;
+    if (budget && budget !== "Không giới hạn") userMessage += ` Ngân sách học phí: ${budget}/năm.`;
 
-    // Dữ liệu giả lập đa dạng khu vực
-    const allSchools = [
-        {
-            ten: "Đại học Bách Khoa Hà Nội",
-            viet_tat: "HUST",
-            loai: "Công lập",
-            hoc_phi: "25-30 triệu/năm",
-            diem_chuan: "26-28 điểm",
-            khu_vuc: "Hà Nội",
-            dac_diem: ["Học bổng", "Nhiều Lab"],
-            website: "#"
-        },
-        {
-            ten: "Đại học Công nghệ - ĐHQGHN",
-            viet_tat: "UET",
-            loai: "Công lập",
-            hoc_phi: "20-25 triệu/năm",
-            diem_chuan: "25-27.5 điểm",
-            khu_vuc: "Hà Nội",
-            dac_diem: ["Sinh viên giỏi", "Việc làm tốt"],
-            website: "#"
-        },
-        {
-            ten: "Đại học Bách Khoa TP.HCM - ĐHQG HCM",
-            viet_tat: "HCMUT",
-            loai: "Công lập",
-            hoc_phi: "30-35 triệu/năm",
-            diem_chuan: "25-27 điểm",
-            khu_vuc: "TP.HCM",
-            dac_diem: ["Lâu đời", "Thực hành nhiều"],
-            website: "#"
-        },
-        {
-            ten: "Đại học Khoa học Tự nhiên TP.HCM",
-            viet_tat: "HCMUS",
-            loai: "Công lập",
-            hoc_phi: "25-30 triệu/năm",
-            diem_chuan: "24-27 điểm",
-            khu_vuc: "TP.HCM",
-            dac_diem: ["Khoa học cơ bản", "AI Lab"],
-            website: "#"
-        },
-        {
-            ten: "Đại học Bách Khoa - ĐH Đà Nẵng",
-            viet_tat: "DUT",
-            loai: "Công lập",
-            hoc_phi: "20-25 triệu/năm",
-            diem_chuan: "23-26 điểm",
-            khu_vuc: "Đà Nẵng",
-            dac_diem: ["Uy tín miền Trung", "Ký túc xá rộng"],
-            website: "#"
-        }
-    ];
+    const systemPrompt = `Bạn là chuyên gia tư vấn tuyển sinh đại học Việt Nam.
+Cung cấp thông tin tham khảo về trường và nghề nghiệp. BẮT BUỘC sử dụng dữ liệu điểm chuẩn mới nhất (năm 2023 hoặc 2024 tùy theo dữ liệu public khả dụng nhất).
+Luôn dùng range cho học phí và lương, không dùng con số cứng.
+Ưu tiên thông tin về các trường lớn, uy tín tại Việt Nam phù hợp với KHU VỰC, ĐIỂM SỐ và NGÂN SÁCH trong user prompt.
+Với điểm chuẩn và học phí, NẾU KHÔNG CHẮC CHẮN HOẶC KHÔNG BIẾT, hãy trả về giá trị 'Đang cập nhật', tuyệt đối KHÔNG tự sáng tác số liệu. Phải có ít nhất 1-3 trường.
 
-    // Lọc theo khu vực
-    let filteredSchools = allSchools;
-    if (location !== "Toàn quốc" && location !== "Tỉnh khác") {
-        filteredSchools = allSchools.filter(s => s.khu_vuc === location);
-    } else if (location === "Tỉnh khác") {
-        // Mock data cho tỉnh khác (nếu không có thì trả về mảng rỗng để render thông báo)
-        filteredSchools = [];
+Trả lời ONLY bằng JSON format sau, bắt đầu bằng { và kết thúc bằng }. Không giải thích thêm:
+{
+  "truong": [
+    {
+      "ten": "Tên đầy đủ",
+      "viet_tat": "VD: ĐHBK HN",
+      "loai": "Công lập | Tư thục | Quốc tế",
+      "hoc_phi": "VD: 15–20 triệu/năm",
+      "diem_chuan": "VD: 24–26 điểm (2024)",
+      "khu_vuc": "Hà Nội | TP.HCM | ...",
+      "dac_diem": ["Học bổng", "Dạy tiếng Anh"],
+      "website": "URL website chính thức"
     }
-
-    // Nếu không có trường nào phù hợp sau khi lọc
-    if (filteredSchools.length === 0) {
-        filteredSchools = [
-            {
-                ten: "Không tìm thấy dữ liệu trường ở khu vực này đối với ngành " + major,
-                viet_tat: "N/A",
-                loai: "N/A",
-                hoc_phi: "N/A",
-                diem_chuan: "N/A",
-                khu_vuc: location,
-                dac_diem: ["Cần mở rộng tìm kiếm"],
-                website: "#"
-            }
-        ];
+  ],
+  "nghe": [
+    {
+      "ten": "Tên nghề",
+      "mo_ta": "1 câu mô tả",
+      "luong_fresher": "VD: 8–12 triệu/tháng",
+      "luong_senior": "VD: 20–35 triệu/tháng"
     }
+  ],
+  "ky_nang": ["kỹ năng 1", "kỹ năng 2", "kỹ năng 3"],
+  "xu_huong": "2–3 câu về triển vọng ngành tại Việt Nam"
+}`;
 
-    // Mock API call
-    setTimeout(() => {
-        hideLoading();
-        renderSchoolsAndCareers({
-            truong: filteredSchools,
-            nghe: [
-                {
-                    ten: "Chuyên viên " + major,
-                    mo_ta: `Làm việc trong lĩnh vực liên quan mật thiết đến ${major}.`,
-                    luong_fresher: "10-15 triệu/tháng",
-                    luong_senior: "30-60 triệu/tháng"
-                }
-            ],
-            ky_nang: ["Tư duy logic", "Giải quyết vấn đề", "Ngoại ngữ"],
-            xu_huong: `Ngành ${major} vẫn sẽ có nhu cầu tuyển dụng lớn, đặc biệt khi yêu cầu chất lượng công việc ngày càng cao.`
+    showLoading("AI đang tra cứu dữ liệu trường và điểm chuẩn...");
+
+    try {
+        const response = await fetch('http://localhost:3000/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ systemPrompt, userMessage })
         });
-    }, 1500);
+
+        if (!response.ok) {
+            const errBody = await response.json();
+            throw new Error(errBody.error?.error?.message || "Lỗi kết nối đến server proxy.");
+        }
+
+        const data = await response.json();
+        const textResponse = data.content?.[0]?.text;
+        
+        if (!textResponse) throw new Error("Dữ liệu trả về từ AI không hợp lệ.");
+
+        const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("Không thể trích xuất JSON từ kết quả AI.");
+        
+        const parsedData = JSON.parse(jsonMatch[0]);
+        
+        hideLoading();
+        if (parsedData.truong && parsedData.truong.length > 0) {
+            renderSchoolsAndCareers(parsedData);
+        } else {
+            alert("AI không tìm thấy trường nào phù hợp. Vui lòng nới lỏng tiêu chí và thử lại!");
+        }
+
+    } catch (error) {
+        console.error(error);
+        hideLoading();
+        alert("Đã xảy ra lỗi: " + error.message + "\nVui lòng xem log (F12) để biết chi tiết và kiểm tra xem server.bat đã chạy chưa.");
+    }
 }
 
 function renderSchoolsAndCareers(data) {
