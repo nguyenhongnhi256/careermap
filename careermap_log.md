@@ -30,6 +30,13 @@ Dự án được triển khai dựa trên bản Planning hoàn chỉnh về ngh
    - *Ưu tiên dữ liệu tuyển sinh 2023-2024. Không chém số, điền 'Đang cập nhật' nếu thiếu thông tin.*
 - Server vận hành ổn định qua script auto-start `start_server.bat` trên Windows giúp khởi chạy local server và tự động fetch giá trị API key trong file cấu hình `.env` ẩn.
 
+### 4. Triển khai (Deployment)
+- **Quản lý mã nguồn (GitHub CO):** Đã thiết lập `.gitignore` an toàn (chặn `.env` chứa API Key), khởi tạo Git, commit mã lệnh và push toàn bộ lên Repository: `https://github.com/nguyenhongnhi256/careermap`.
+- **Hosting (Vercel):** Đã cấu hình và triển khai thành công lên đám mây Vercel tại địa chỉ `https://careermap-pi.vercel.app/`.
+     - *Xử lý rào cản Router:* Đã thay đổi đường dẫn Fetch API nội bộ từ dạng tuyệt đối `http://localhost:3000/...` sang dạng tương đối `/api/...`.
+     - *Xử lý Serverless Function:* Đã bổ sung cấu trúc file lệnh `vercel.json` để Vercel route API fetch request từ Frontend về trúng con file backend Node.js (`server.js`).
+     - *Bảo mật thông tin:* Khóa API `GEMINI_API_KEY` đã được thiết lập thẳng vào Environment Variables của Vercel Production giúp Website hoạt động trơn tru, hoàn toàn tách biệt khỏi môi trường máy tính cá nhân.
+
 ---
 
-**Trạng thái hiện tại:** Hoàn tất, web app chạy trơn tru với dữ liệu thật. Sẵn sàng đem đi public hoặc host lên Vercel/Netlify.
+**Trạng thái hiện tại:** Hoàn tất, web app chạy trơn tru với dữ liệu thật. Sẵn sàng đem đi public. Đã Live trên Vercel.

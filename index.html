@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CareerMap VN - Khám phá ngành học, Tìm trường phù hợp</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="header">
         <div class="container header-content">
@@ -21,7 +24,8 @@
         <!-- Chú ý: Ở đây ta sẽ chia ra các section điều hướng -->
         <section id="flow-selection" class="flow-selection">
             <button class="btn btn-large btn-primary" onclick="startFlowA()">🧭 Tôi chưa biết mình hợp ngành gì</button>
-            <button class="btn btn-large btn-outline" onclick="startFlowB()">🎯 Tôi đã biết ngành, cần tìm trường</button>
+            <button class="btn btn-large btn-outline" onclick="startFlowB()">🎯 Tôi đã biết ngành, cần tìm
+                trường</button>
         </section>
 
         <!-- Luồng A: Khám phá ngành -->
@@ -52,21 +56,28 @@
                     <label>2. Bạn thích làm việc kiểu gì?</label>
                     <div class="radio-card-group">
                         <div class="radio-card-pair">
-                            <label class="radio-card"><input type="radio" name="work_style_1" value="Làm một mình"><span>Làm một mình</span></label>
-                            <label class="radio-card"><input type="radio" name="work_style_1" value="Làm việc nhóm"><span>Làm việc nhóm</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_1"
+                                    value="Làm một mình"><span>Làm một mình</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_1"
+                                    value="Làm việc nhóm"><span>Làm việc nhóm</span></label>
                         </div>
                         <div class="radio-card-pair">
-                            <label class="radio-card"><input type="radio" name="work_style_2" value="Trong văn phòng"><span>Trong văn phòng</span></label>
-                            <label class="radio-card"><input type="radio" name="work_style_2" value="Ra ngoài thực địa"><span>Ra ngoài thực địa</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_2"
+                                    value="Trong văn phòng"><span>Trong văn phòng</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_2"
+                                    value="Ra ngoài thực địa"><span>Ra ngoài thực địa</span></label>
                         </div>
                         <div class="radio-card-pair">
-                            <label class="radio-card"><input type="radio" name="work_style_3" value="Phân tích / logic"><span>Phân tích / logic</span></label>
-                            <label class="radio-card"><input type="radio" name="work_style_3" value="Sáng tạo / nghệ thuật"><span>Sáng tạo / nghệ thuật</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_3"
+                                    value="Phân tích / logic"><span>Phân tích / logic</span></label>
+                            <label class="radio-card"><input type="radio" name="work_style_3"
+                                    value="Sáng tạo / nghệ thuật"><span>Sáng tạo / nghệ thuật</span></label>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-large btn-primary w-100" onclick="submitFlowA()">✨ Gợi ý ngành phù hợp cho tôi</button>
+                <button class="btn btn-large btn-primary w-100" onclick="submitFlowA()">✨ Gợi ý ngành phù hợp cho
+                    tôi</button>
             </div>
 
             <div id="results-a" class="results-container hidden">
@@ -85,7 +96,8 @@
 
                 <div class="form-group">
                     <label>Ngành muốn học</label>
-                    <input type="text" id="major-input" class="text-input" placeholder="VD: Công nghệ thông tin, Marketing..." list="major-suggestions">
+                    <input type="text" id="major-input" class="text-input"
+                        placeholder="VD: Công nghệ thông tin, Marketing..." list="major-suggestions">
                     <datalist id="major-suggestions">
                         <option value="Công nghệ thông tin">
                         <option value="Kinh tế">
@@ -109,7 +121,8 @@
 
                 <div class="form-group">
                     <label>Điểm thi tham khảo (3 môn tổ hợp)</label>
-                    <input type="number" id="score-input" class="text-input" placeholder="VD: 24.5" step="0.25" min="0" max="30">
+                    <input type="number" id="score-input" class="text-input" placeholder="VD: 24.5" step="0.25" min="0"
+                        max="30">
                 </div>
 
                 <div class="form-group">
@@ -127,7 +140,8 @@
 
             <div id="results-b" class="results-container hidden">
                 <div class="disclaimer-box mb-4">
-                    ⚠️ Thông tin học phí và điểm chuẩn mang tính tham khảo, tổng hợp từ dữ liệu công khai. Vui lòng xác minh trực tiếp với nhà trường trước khi quyết định.
+                    ⚠️ Thông tin học phí và điểm chuẩn mang tính tham khảo, tổng hợp từ dữ liệu công khai. Vui lòng xác
+                    minh trực tiếp với nhà trường trước khi quyết định.
                 </div>
 
                 <h3 class="mb-3">🏫 Các trường nổi bật</h3>
@@ -153,4 +167,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
